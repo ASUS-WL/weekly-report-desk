@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>週報彙整台</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#F5F6F9;
+    --surface:#FFFFFF;
+    --surface-raised:#FFFFFF;
+    --border:#DDE1E9;
+    --border-soft:#E9EBF1;
+    --text:#1B2233;
+    --text-soft:#5B6373;
+    --text-faint:#8A91A0;
+    --accent:#3958D9;
+    --accent-soft:#EAEEFC;
+    --accent-contrast:#FFFFFF;
+    --ok:#1E8E5A;
+    --ok-soft:#E5F4EC;
+    --warn:#B8631E;
+    --warn-soft:#FBEEE1;
+    --danger:#C23A3A;
+    --src-outlook:#2B579A;
+    --src-outlook-soft:#E3EAF6;
+    --src-teams:#5B5FC7;
+    --src-teams-soft:#EAEAF9;
+    --src-github:#24292F;
+    --src-github-soft:#E7E8EA;
+    --src-other:#6B7280;
+    --src-other-soft:#EDEEF1;
+    --shadow: 0 1px 2px rgba(27,34,51,0.04), 0 6px 20px rgba(27,34,51,0.06);
+    --focus: 0 0 0 3px rgba(57,88,217,0.28);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#11141C;
+      --surface:#181C27;
+      --surface-raised:#1E2330;
+      --border:#2B3040;
+      --border-soft:#242938;
+      --text:#E9ECF4;
+      --text-soft:#A6ADBC;
+      --text-faint:#727A8C;
+      --accent:#7C97F5;
+      --accent-soft:#242C48;
+      --accent-contrast:#0F1220;
+      --ok:#4FBE8B;
+      --ok-soft:#173226;
+      --warn:#E0A257;
+      --warn-soft:#3A2A17;
+      --danger:#E5726E;
+      --src-outlook:#8FADE8;
+      --src-outlook-soft:#202B42;
+      --src-teams:#A6A9EF;
+      --src-teams-soft:#282A47;
+      --src-github:#C7CCD4;
+      --src-github-soft:#262A32;
+      --src-other:#AEB4C2;
+      --src-other-soft:#242832;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+      --focus: 0 0 0 3px rgba(124,151,245,0.35);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ margin:0; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"IBM Plex Sans","Noto Sans TC",-apple-system,sans-serif;
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  ::selection{ background:var(--accent-soft); }
+
+  .app{ max-width:1180px; margin:0 auto; padding:28px 24px 64px; }
+
+  .topbar{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+    flex-wrap:wrap; margin-bottom:22px;
+  }
+  .brand{ display:flex; flex-direction:column; gap:4px; }
+  .brand h1{
+    font-family:"Sora",sans-serif; font-weight:700; font-size:22px; letter-spacing:.2px;
+    margin:0; color:var(--text);
+  }
+  .brand p{ margin:0; color:var(--text-soft); font-size:13px; }
+
+  .week-control{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:6px 8px; box-shadow:var(--shadow);
+  }
+  .week-control button.nav{
+    width:28px; height:28px; border-radius:7px; border:1px solid transparent; background:transparent;
+    color:var(--text-soft); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .week-control button.nav:hover{ background:var(--accent-soft); color:var(--accent); }
+  .week-label{
+    font-family:"IBM Plex Mono", monospace; font-size:12.5px; color:var(--text);
+    padding:0 4px; white-space:nowrap; font-variant-numeric:tabular-nums;
+  }
+  .week-clear{
+    margin-left:6px; border:none; background:transparent; color:var(--text-faint);
+    font-size:12px; cursor:pointer; text-decoration:underline; text-underline-offset:2px;
+    padding:4px 6px;
+  }
+  .week-clear:hover{ color:var(--danger); }
+
+  .grid{
+    display:grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr);
+    gap:20px; align-items:start;
+  }
+  @media (max-width: 860px){ .grid{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; border-bottom:1px solid var(--border-soft);
+  }
+  .panel-head h2{
+    font-family:"Sora",sans-serif; font-size:14px; font-weight:600; margin:0;
+    display:flex; align-items:center; gap:8px; color:var(--text);
+  }
+  .count-pill{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; background:var(--accent-soft);
+    color:var(--accent); border-radius:999px; padding:2px 8px; font-variant-numeric:tabular-nums;
+  }
+  .panel-body{ padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; }
+
+  label.field-label{
+    font-size:12px; color:var(--text-soft); font-weight:500; display:block; margin-bottom:6px;
+  }
+  .source-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .source-chip{
+    border:1px solid var(--border); background:var(--surface-raised); color:var(--text-soft);
+    border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; font-weight:500;
+    display:flex; align-items:center; gap:6px; transition:border-color .12s, color .12s;
+  }
+  .source-chip .dot{ width:7px; height:7px; border-radius:50%; }
+  .source-chip[data-active="true"]{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+
+  textarea, input[type="text"], input[type="url"], input[type="password"]{
+    width:100%; border:1px solid var(--border); border-radius:10px; background:var(--surface-raised);
+    color:var(--text); font-family:"IBM Plex Sans","Noto Sans TC",sans-serif; font-size:13.5px;
+    padding:10px 12px; resize:vertical;
+  }
+  textarea:focus, input:focus{ outline:none; border-color:var(--accent); box-shadow:var(--focus); }
+  textarea::placeholder, input::placeholder{ color:var(--text-faint); }
+
+  .hint{ font-size:11.5px; color:var(--text-faint); margin-top:5px; line-height:1.5; }
+
+  .add-btn{
+    align-self:flex-start; border:none; background:var(--accent); color:var(--accent-contrast);
+    font-weight:600; font-size:13px; padding:9px 18px; border-radius:9px; cursor:pointer;
+  }
+  .add-btn:hover{ filter:brightness(1.06); }
+  .add-btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  .item-list{ display:flex; flex-direction:column; gap:8px; max-height:420px; overflow-y:auto; }
+  .item-card{
+    border:1px solid var(--border-soft); border-radius:10px; padding:10px 12px;
+    display:flex; gap:10px; align-items:flex-start; background:var(--surface);
+  }
+  .item-badge{
+    flex:0 0 auto; font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:999px;
+    white-space:nowrap; margin-top:1px;
+  }
+  .item-main{ flex:1; min-width:0; }
+  .item-text{
+    font-size:13px; color:var(--text); white-space:pre-wrap; word-break:break-word;
+    max-height:4.8em; overflow:hidden;
+  }
+  .item-link{ font-size:11.5px; color:var(--accent); word-break:break-all; display:block; margin-top:4px; }
+  .item-remove{
+    flex:0 0 auto; border:none; background:transparent; color:var(--text-faint); cursor:pointer;
+    font-size:15px; line-height:1; padding:2px 4px; border-radius:6px;
+  }
+  .item-remove:hover{ color:var(--danger); background:var(--accent-soft); }
+
+  .empty-state{
+    text-align:center; color:var(--text-faint); font-size:12.5px; padding:26px 10px;
+    border:1px dashed var(--border); border-radius:10px;
+  }
+
+  .generate-btn{
+    width:100%; border:none; background:var(--accent); color:var(--accent-contrast);
+    font-family:"Sora",sans-serif; font-weight:600; font-size:13.5px; padding:11px 14px;
+    border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .generate-btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .generate-btn:not(:disabled):hover{ filter:brightness(1.05); }
+
+  .spinner{
+    width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; animation:spin .7s linear infinite; display:none;
+  }
+  .generate-btn[data-loading="true"] .spinner{ display:inline-block; }
+  .fetch-btn[data-loading="true"] .mini-spinner{ display:inline-block; }
+  .mini-spinner{
+    width:11px; height:11px; border-radius:50%; border:2px solid var(--border);
+    border-top-color:var(--accent); animation:spin .7s linear infinite; display:none;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .spinner, .mini-spinner{ animation:none; } }
+
+  .output-wrap{ position:relative; }
+  .output-area{
+    width:100%; min-height:320px; border:1px solid var(--border); border-radius:10px;
+    background:var(--surface-raised); color:var(--text); font-family:"IBM Plex Sans","Noto Sans TC",sans-serif;
+    font-size:13.5px; line-height:1.75; padding:14px; resize:vertical; white-space:pre-wrap;
+  }
+  .output-toolbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .ghost-btn{
+    border:1px solid var(--border); background:var(--surface-raised); color:var(--text-soft);
+    font-size:12px; font-weight:500; padding:7px 13px; border-radius:8px; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+  }
+  .ghost-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .ghost-btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .meta-line{ font-size:11.5px; color:var(--text-faint); font-family:"IBM Plex Mono",monospace; }
+
+  .banner{
+    font-size:12.5px; border-radius:10px; padding:10px 12px; display:none; margin-top:2px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  .banner[data-show="true"]{ display:flex; }
+  .banner.warn{ background:var(--warn-soft); color:var(--warn); }
+  .banner.danger{ background:var(--warn-soft); color:var(--danger); }
+  .banner .link-btn{
+    border:none; background:transparent; color:inherit; text-decoration:underline;
+    text-underline-offset:2px; font-weight:600; font-size:inherit; cursor:pointer; padding:0;
+  }
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(10px);
+    background:var(--text); color:var(--bg); font-size:12.5px; padding:9px 16px; border-radius:999px;
+    box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .18s, transform .18s;
+    z-index:20; max-width:90vw;
+  }
+  .toast[data-show="true"]{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  a{ color:var(--accent); }
+
+  .gear-btn{
+    width:34px; height:34px; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text-soft); font-size:15px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+    position:relative;
+  }
+  .gear-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .gear-dot{
+    position:absolute; top:-3px; right:-3px; width:9px; height:9px; border-radius:50%;
+    background:var(--text-faint); border:2px solid var(--bg);
+  }
+  .gear-dot[data-state="ok"]{ background:var(--ok); }
+  .gear-dot[data-state="partial"]{ background:var(--warn); }
+
+  .github-fetch-row{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    border:1px solid var(--border-soft); background:var(--src-github-soft); border-radius:10px;
+    padding:9px 12px;
+  }
+  .github-fetch-row .fr-text{ font-size:12px; color:var(--text-soft); flex:1; min-width:160px; }
+  .fetch-btn{
+    border:1px solid var(--border); background:var(--surface); color:var(--text);
+    font-size:12px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer;
+    white-space:nowrap; display:flex; align-items:center; gap:6px;
+  }
+  .fetch-btn:hover{ border-color:var(--src-github); }
+  .fetch-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .link-fetch-row{ display:flex; gap:8px; align-items:center; }
+  .link-fetch-row input{ flex:1; }
+  .icon-btn{
+    flex:0 0 auto; width:38px; height:38px; border-radius:9px; border:1px solid var(--border);
+    background:var(--surface-raised); color:var(--text-soft); cursor:pointer; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .icon-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(10,12,18,0.42); display:none;
+    align-items:center; justify-content:center; padding:20px; z-index:30;
+    overflow-y:auto;
+  }
+  .modal-overlay[data-open="true"]{ display:flex; }
+  .modal-dialog{
+    width:100%; max-width:480px; background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; box-shadow:var(--shadow); overflow:hidden; margin:auto;
+  }
+  .modal-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:16px 18px; border-bottom:1px solid var(--border-soft);
+  }
+  .modal-head h3{
+    font-family:"Sora",sans-serif; font-size:15px; font-weight:600; margin:0; color:var(--text);
+    display:flex; align-items:center; gap:8px;
+  }
+  .modal-close{
+    border:none; background:transparent; color:var(--text-faint); font-size:17px; cursor:pointer;
+    padding:2px 6px; border-radius:6px; line-height:1;
+  }
+  .modal-close:hover{ color:var(--text); background:var(--accent-soft); }
+  .modal-body{ padding:16px 18px 18px; display:flex; flex-direction:column; gap:18px; max-height:70vh; overflow-y:auto; }
+  .settings-section{ display:flex; flex-direction:column; gap:8px; }
+  .settings-section + .settings-section{ padding-top:14px; border-top:1px solid var(--border-soft); }
+  .settings-section-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .settings-section-head h4{
+    font-family:"Sora",sans-serif; font-size:13px; font-weight:600; margin:0; color:var(--text);
+    display:flex; align-items:center; gap:6px;
+  }
+  .status-pill{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:500;
+    padding:3px 9px; border-radius:999px; background:var(--src-other-soft); color:var(--text-soft);
+    white-space:nowrap;
+  }
+  .status-pill .status-dot{ width:6px; height:6px; border-radius:50%; background:var(--text-faint); }
+  .status-pill[data-state="connected"]{ background:var(--ok-soft); color:var(--ok); }
+  .status-pill[data-state="connected"] .status-dot{ background:var(--ok); }
+  .status-pill[data-state="pending"]{ background:var(--warn-soft); color:var(--warn); }
+  .status-pill[data-state="pending"] .status-dot{ background:var(--warn); }
+  .key-row{ display:flex; gap:8px; }
+  .key-row input{ flex:1; font-family:"IBM Plex Mono",monospace; font-size:12.5px; }
+  .settings-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .settings-btn{
+    border:1px solid var(--border); background:var(--surface-raised); color:var(--text);
+    font-size:12px; font-weight:600; padding:7px 13px; border-radius:8px; cursor:pointer;
+  }
+  .settings-btn.primary{ background:var(--accent); border-color:var(--accent); color:var(--accent-contrast); }
+  .settings-btn:hover{ filter:brightness(1.05); }
+  .settings-btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .settings-hint{ font-size:11.5px; color:var(--text-faint); line-height:1.6; margin:0; }
+  .model-row{ display:flex; align-items:center; gap:8px; }
+  .model-row label{ font-size:11.5px; color:var(--text-faint); white-space:nowrap; }
+  .model-row input{ font-family:"IBM Plex Mono",monospace; font-size:12px; padding:6px 9px; }
+  .security-note{
+    font-size:11.5px; color:var(--text-faint); background:var(--accent-soft); border-radius:8px;
+    padding:10px 12px; line-height:1.65;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>週報彙整台</h1>
+      <p>貼上 Outlook、Teams、GitHub 的內容,AI 依專案整理成週報草稿</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="week-control">
+        <button class="nav" id="prevWeek" title="上一週" aria-label="上一週">‹</button>
+        <span class="week-label" id="weekLabel">—</span>
+        <button class="nav" id="nextWeek" title="下一週" aria-label="下一週">›</button>
+      </div>
+      <button class="week-clear" id="clearWeek">清空本週</button>
+      <button class="gear-btn" id="settingsBtn" title="設定" aria-label="設定">
+        ⚙<span class="gear-dot" id="gearDot" data-state="off"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: input -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>本週輸入 <span class="count-pill" id="itemCount">0</span></h2>
+      </div>
+      <div class="panel-body">
+        <div>
+          <label class="field-label">來源</label>
+          <div class="source-row" id="sourceRow">
+            <button class="source-chip" data-src="outlook" data-active="true"><span class="dot" style="background:var(--src-outlook)"></span>Outlook</button>
+            <button class="source-chip" data-src="teams"><span class="dot" style="background:var(--src-teams)"></span>Teams</button>
+            <button class="source-chip" data-src="github"><span class="dot" style="background:var(--src-github)"></span>GitHub</button>
+            <button class="source-chip" data-src="other"><span class="dot" style="background:var(--src-other)"></span>其他</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label" id="contentLabel">內容(可直接貼上或拖曳選取的郵件文字)</label>
+          <textarea id="contentInput" rows="4" placeholder="貼上郵件內容、Teams 對話,或 issue 的標題與重點…"></textarea>
+          <div class="hint" id="contentHint">小技巧:選取郵件或訊息中的文字,直接拖曳到這個框裡也可以貼上。</div>
+        </div>
+
+        <div id="linkField">
+          <label class="field-label">連結(選填)</label>
+          <div class="link-fetch-row">
+            <input type="url" id="linkInput" placeholder="https://github.com/org/repo/issues/123">
+            <button class="icon-btn" id="fetchLinkBtn" title="抓取這個連結的內容(需先在設定輸入 GitHub Token)" aria-label="抓取連結內容">⤓</button>
+          </div>
+          <div class="hint" id="linkHint">GitHub 來源時,貼上 issue／PR 連結後按右側按鈕,會自動把標題與內容抓進上方欄位。</div>
+        </div>
+
+        <div class="github-fetch-row" id="githubFetchRow" style="display:none;">
+          <span class="fr-text" id="githubStatusText">尚未設定 GitHub Token</span>
+          <button class="fetch-btn" id="githubFetchBtn"><span class="mini-spinner"></span><span id="githubFetchLabel">📥 抓取本週指派給我的動態</span></button>
+        </div>
+
+        <button class="add-btn" id="addItemBtn">＋ 加入本週清單</button>
+
+        <div id="itemListWrap">
+          <div class="empty-state" id="emptyState">還沒有加入任何項目<br>貼上第一則郵件、訊息或 issue 開始整理</div>
+          <div class="item-list" id="itemList" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: output -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>AI 整理結果</h2>
+        <span class="meta-line" id="lastRun"></span>
+      </div>
+      <div class="panel-body">
+        <button class="generate-btn" id="generateBtn" disabled>
+          <span class="spinner"></span>
+          <span id="generateLabel">整理本週重點</span>
+        </button>
+
+        <div class="banner warn" id="noKeyBanner">
+          <span>還沒設定 Anthropic API Key,無法使用 AI 整理。</span>
+          <button class="link-btn" id="openSettingsFromBanner">前往設定 →</button>
+        </div>
+        <div class="banner danger" id="errorBanner"></div>
+
+        <div class="output-wrap">
+          <textarea class="output-area" id="outputArea" placeholder="按下「整理本週重點」,AI 會依專案／主題把左側項目整理成條列重點,顯示在這裡。整理完可直接編輯微調。"></textarea>
+        </div>
+
+        <div class="output-toolbar">
+          <button class="ghost-btn" id="regenerateBtn" disabled>↻ 重新整理</button>
+          <button class="ghost-btn" id="copyBtn">⧉ 複製到剪貼簿</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <h3 id="settingsTitle">⚙ 設定</h3>
+      <button class="modal-close" id="settingsClose" aria-label="關閉">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="settings-section">
+        <div class="settings-section-head">
+          <h4>✨ AI 整理(Anthropic API Key)</h4>
+          <span class="status-pill" id="anthropicStatusPill" data-state="off"><span class="status-dot"></span><span id="anthropicStatusLabel">尚未設定</span></span>
+        </div>
+        <div class="key-row">
+          <input type="password" id="anthropicKeyInput" placeholder="sk-ant-...">
+          <button class="icon-btn" id="anthropicToggle" title="顯示／隱藏" aria-label="顯示或隱藏">👁</button>
+        </div>
+        <div class="model-row">
+          <label for="anthropicModelInput">模型</label>
+          <input type="text" id="anthropicModelInput" value="claude-sonnet-5">
+        </div>
+        <div class="settings-actions">
+          <button class="settings-btn primary" id="anthropicSave">儲存</button>
+          <button class="settings-btn" id="anthropicClear">清除</button>
+        </div>
+        <p class="settings-hint">key 只會存在您這個瀏覽器裡,直接呼叫 Anthropic API,不會經過其他伺服器。到 <span style="font-family:'IBM Plex Mono',monospace;">console.anthropic.com</span> 的 API Keys 頁面建立。</p>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-head">
+          <h4>🐙 GitHub Personal Access Token</h4>
+          <span class="status-pill" id="githubStatusPill" data-state="off"><span class="status-dot"></span><span id="githubStatusLabel">尚未設定</span></span>
+        </div>
+        <div class="key-row">
+          <input type="password" id="githubTokenInput" placeholder="ghp_... 或 github_pat_...">
+          <button class="icon-btn" id="githubToggle" title="顯示／隱藏" aria-label="顯示或隱藏">👁</button>
+        </div>
+        <div class="settings-actions">
+          <button class="settings-btn primary" id="githubTest">測試並儲存</button>
+          <button class="settings-btn" id="githubClear">清除</button>
+        </div>
+        <p class="settings-hint">到 github.com → Settings → Developer settings → Personal access tokens 建立;fine-grained token 只需要勾選 Issues 與 Pull requests 的 Read-only 權限即可。</p>
+      </div>
+
+      <div class="security-note">🔒 這兩個值只存在您目前這個瀏覽器的本機儲存空間(localStorage),只會直接送到 Anthropic / GitHub 官方網址。請不要在公用電腦上輸入,也建議只給最小必要權限的 token。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var SOURCES = {
+    outlook: { label:"Outlook", color:"var(--src-outlook)", soft:"var(--src-outlook-soft)" },
+    teams:   { label:"Teams",   color:"var(--src-teams)",   soft:"var(--src-teams-soft)" },
+    github:  { label:"GitHub",  color:"var(--src-github)",  soft:"var(--src-github-soft)" },
+    other:   { label:"其他",    color:"var(--src-other)",   soft:"var(--src-other-soft)" }
+  };
+
+  var state = {
+    activeSource: "outlook",
+    weekStart: mondayOf(new Date()),
+    items: [],
+    output: "",
+    lastRun: ""
+  };
+
+  // ---------- date / week helpers ----------
+  function mondayOf(d){
+    var date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var day = date.getDay();
+    var diff = (day === 0 ? -6 : 1 - day);
+    date.setDate(date.getDate() + diff);
+    return date;
+  }
+  function addDays(d, n){ var r = new Date(d); r.setDate(r.getDate() + n); return r; }
+  function fmt(d){
+    var y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return y + "/" + m + "/" + day;
+  }
+  function weekKey(d){ return fmt(d).replace(/\//g,"-"); }
+
+  // ---------- per-week storage ----------
+  function storageKey(suffix){ return "weekly-report-desk:" + weekKey(state.weekStart) + ":" + suffix; }
+  function loadWeek(){
+    try{
+      var rawItems = localStorage.getItem(storageKey("items"));
+      state.items = rawItems ? JSON.parse(rawItems) : [];
+    }catch(e){ state.items = []; }
+    try{
+      state.output = localStorage.getItem(storageKey("output")) || "";
+      state.lastRun = localStorage.getItem(storageKey("lastRun")) || "";
+    }catch(e){ state.output = ""; state.lastRun = ""; }
+  }
+  function saveItems(){
+    try{ localStorage.setItem(storageKey("items"), JSON.stringify(state.items)); }catch(e){}
+  }
+  function saveOutput(){
+    try{
+      localStorage.setItem(storageKey("output"), state.output);
+      localStorage.setItem(storageKey("lastRun"), state.lastRun);
+    }catch(e){}
+  }
+
+  // ---------- global settings storage (BYOK) ----------
+  var SETTINGS_KEYS = {
+    anthropicKey: "weekly-report-desk:settings:anthropicKey",
+    anthropicModel: "weekly-report-desk:settings:anthropicModel",
+    githubToken: "weekly-report-desk:settings:githubToken",
+    githubLogin: "weekly-report-desk:settings:githubLogin"
+  };
+  function getSetting(k){ try{ return localStorage.getItem(SETTINGS_KEYS[k]) || ""; }catch(e){ return ""; } }
+  function setSetting(k, v){ try{ localStorage.setItem(SETTINGS_KEYS[k], v); }catch(e){} }
+  function clearSetting(k){ try{ localStorage.removeItem(SETTINGS_KEYS[k]); }catch(e){} }
+
+  // ---------- elements ----------
+  var el = {
+    weekLabel: document.getElementById("weekLabel"),
+    prevWeek: document.getElementById("prevWeek"),
+    nextWeek: document.getElementById("nextWeek"),
+    clearWeek: document.getElementById("clearWeek"),
+    sourceRow: document.getElementById("sourceRow"),
+    contentInput: document.getElementById("contentInput"),
+    contentLabel: document.getElementById("contentLabel"),
+    linkField: document.getElementById("linkField"),
+    linkInput: document.getElementById("linkInput"),
+    fetchLinkBtn: document.getElementById("fetchLinkBtn"),
+    addItemBtn: document.getElementById("addItemBtn"),
+    itemList: document.getElementById("itemList"),
+    emptyState: document.getElementById("emptyState"),
+    itemCount: document.getElementById("itemCount"),
+    generateBtn: document.getElementById("generateBtn"),
+    generateLabel: document.getElementById("generateLabel"),
+    regenerateBtn: document.getElementById("regenerateBtn"),
+    copyBtn: document.getElementById("copyBtn"),
+    outputArea: document.getElementById("outputArea"),
+    lastRunLabel: document.getElementById("lastRun"),
+    noKeyBanner: document.getElementById("noKeyBanner"),
+    openSettingsFromBanner: document.getElementById("openSettingsFromBanner"),
+    errorBanner: document.getElementById("errorBanner"),
+    toast: document.getElementById("toast"),
+    settingsBtn: document.getElementById("settingsBtn"),
+    gearDot: document.getElementById("gearDot"),
+    settingsModal: document.getElementById("settingsModal"),
+    settingsClose: document.getElementById("settingsClose"),
+    githubFetchRow: document.getElementById("githubFetchRow"),
+    githubStatusText: document.getElementById("githubStatusText"),
+    githubFetchBtn: document.getElementById("githubFetchBtn"),
+    githubFetchLabel: document.getElementById("githubFetchLabel"),
+    anthropicKeyInput: document.getElementById("anthropicKeyInput"),
+    anthropicToggle: document.getElementById("anthropicToggle"),
+    anthropicModelInput: document.getElementById("anthropicModelInput"),
+    anthropicSave: document.getElementById("anthropicSave"),
+    anthropicClear: document.getElementById("anthropicClear"),
+    anthropicStatusPill: document.getElementById("anthropicStatusPill"),
+    anthropicStatusLabel: document.getElementById("anthropicStatusLabel"),
+    githubTokenInput: document.getElementById("githubTokenInput"),
+    githubToggle: document.getElementById("githubToggle"),
+    githubTest: document.getElementById("githubTest"),
+    githubClear: document.getElementById("githubClear"),
+    githubStatusPill: document.getElementById("githubStatusPill"),
+    githubStatusLabel: document.getElementById("githubStatusLabel")
+  };
+
+  var CONTENT_PLACEHOLDERS = {
+    outlook: "貼上郵件重點,例如:主旨、決議、待辦…",
+    teams: "貼上 Teams 對話中的重點結論或決議…",
+    github: "貼上 issue／PR 的標題與重點摘要,或用右側按鈕自動抓取…",
+    other: "貼上這則溝通的重點內容…"
+  };
+
+  function renderSourceRow(){
+    Array.prototype.forEach.call(el.sourceRow.children, function(btn){
+      btn.setAttribute("data-active", btn.getAttribute("data-src") === state.activeSource ? "true" : "false");
+    });
+    el.contentInput.placeholder = CONTENT_PLACEHOLDERS[state.activeSource];
+    el.contentLabel.textContent = state.activeSource === "github"
+      ? "內容(issue／PR 標題與重點,可貼上完整說明或自動抓取)"
+      : "內容(可直接貼上或拖曳選取的文字)";
+    el.githubFetchRow.style.display = state.activeSource === "github" ? "flex" : "none";
+    renderGithubStatusUI();
+  }
+
+  el.sourceRow.addEventListener("click", function(e){
+    var btn = e.target.closest(".source-chip");
+    if(!btn) return;
+    state.activeSource = btn.getAttribute("data-src");
+    renderSourceRow();
+  });
+
+  function renderWeek(){
+    var end = addDays(state.weekStart, 4);
+    el.weekLabel.textContent = fmt(state.weekStart) + " – " + fmt(end);
+  }
+
+  function badgeStyle(src){
+    var s = SOURCES[src] || SOURCES.other;
+    return "background:" + s.soft + "; color:" + s.color + ";";
+  }
+
+  function renderItems(){
+    el.itemCount.textContent = String(state.items.length);
+    if(state.items.length === 0){
+      el.emptyState.style.display = "block";
+      el.itemList.style.display = "none";
+      el.itemList.innerHTML = "";
+      el.generateBtn.disabled = true;
+      el.regenerateBtn.disabled = true;
+      return;
+    }
+    el.emptyState.style.display = "none";
+    el.itemList.style.display = "flex";
+    el.generateBtn.disabled = false;
+    el.regenerateBtn.disabled = false;
+
+    el.itemList.innerHTML = state.items.map(function(item){
+      var s = SOURCES[item.source] || SOURCES.other;
+      var linkHtml = item.link ? '<span class="item-link">🔗 ' + escapeHtml(item.link) + "</span>" : "";
+      return (
+        '<div class="item-card" data-id="' + item.id + '">' +
+          '<span class="item-badge" style="' + badgeStyle(item.source) + '">' + s.label + "</span>" +
+          '<div class="item-main">' +
+            '<div class="item-text">' + escapeHtml(item.text || "(僅連結,無內容)") + "</div>" +
+            linkHtml +
+          "</div>" +
+          '<button class="item-remove" data-remove="' + item.id + '" title="移除" aria-label="移除">×</button>' +
+        "</div>"
+      );
+    }).join("");
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+
+  el.itemList.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-remove]");
+    if(!btn) return;
+    var id = btn.getAttribute("data-remove");
+    state.items = state.items.filter(function(i){ return String(i.id) !== String(id); });
+    saveItems();
+    renderItems();
+  });
+
+  function addItem(source, text, link){
+    if(!text && !link) return null;
+    var item = {
+      id: Date.now() + "-" + Math.random().toString(36).slice(2,7),
+      source: source,
+      text: text || "",
+      link: link || ""
+    };
+    state.items.push(item);
+    saveItems();
+    renderItems();
+    return item;
+  }
+
+  el.addItemBtn.addEventListener("click", function(){
+    var text = el.contentInput.value.trim();
+    var link = el.linkInput.value.trim();
+    if(!text && !link) return;
+    addItem(state.activeSource, text, link);
+    el.contentInput.value = "";
+    el.linkInput.value = "";
+    el.contentInput.focus();
+  });
+
+  el.contentInput.addEventListener("keydown", function(e){
+    if((e.metaKey || e.ctrlKey) && e.key === "Enter"){
+      e.preventDefault();
+      el.addItemBtn.click();
+    }
+  });
+
+  // ---------- week navigation ----------
+  function switchWeek(newStart){
+    state.weekStart = newStart;
+    loadWeek();
+    renderWeek();
+    renderItems();
+    renderOutput();
+  }
+  el.prevWeek.addEventListener("click", function(){ switchWeek(addDays(state.weekStart, -7)); });
+  el.nextWeek.addEventListener("click", function(){ switchWeek(addDays(state.weekStart, 7)); });
+  el.clearWeek.addEventListener("click", function(){
+    if(state.items.length === 0 && !state.output) return;
+    state.items = [];
+    state.output = "";
+    state.lastRun = "";
+    saveItems();
+    saveOutput();
+    renderItems();
+    renderOutput();
+    showToast("已清空本週內容");
+  });
+
+  // ---------- output ----------
+  function renderOutput(){
+    el.outputArea.value = state.output;
+    el.regenerateBtn.disabled = state.items.length === 0;
+    el.lastRunLabel.textContent = state.lastRun ? ("上次整理 " + state.lastRun) : "";
+  }
+  el.outputArea.addEventListener("input", function(){
+    state.output = el.outputArea.value;
+    saveOutput();
+  });
+
+  function nowLabel(){
+    var d = new Date();
+    return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+  }
+
+  function buildPrompt(){
+    var lines = state.items.map(function(item, idx){
+      var s = SOURCES[item.source] || SOURCES.other;
+      var parts = ["#" + (idx+1) + " [" + s.label + "]"];
+      if(item.text) parts.push("內容:" + item.text);
+      if(item.link) parts.push("連結:" + item.link);
+      return parts.join(" | ");
+    }).join("\n");
+
+    return [
+      "你是一位協助整理週報的助理。以下是使用者本週從 Outlook、Teams、GitHub 收集到的工作紀錄片段,請整理成一份可以直接貼進週報的重點摘要。",
+      "",
+      "整理規則:",
+      "1. 依「專案或主題」分組,每組用「■ 專案／主題名稱」作為小標題;同一專案不同來源的內容要合併在同一組。",
+      "2. 每個項目整理成一行重點,以「- 」開頭,清楚說明做了什麼、目前狀態,若有阻塞或待辦要特別標出(例如加上「(待辦)」或「(阻塞)」)。",
+      "3. 若項目附有連結,在該行文字後面加上「(連結: 網址)」。",
+      "4. 只用「■」與「- 」兩種符號,不要用 Markdown 的標題井號或粗體星號,輸出要是可以直接貼到文件裡的純文字。",
+      "5. 用繁體中文,語氣專業、精簡,不要加多餘的開場或結尾語。",
+      "6. 內容不足以判斷重點時,就精簡照原意呈現,不要編造。",
+      "",
+      "本週收集的項目:",
+      lines
+    ].join("\n");
+  }
+
+  // ---------- Anthropic (BYOK, direct browser call) ----------
+  function anthropicReady(){ return !!getSetting("anthropicKey"); }
+
+  function callAnthropic(prompt){
+    var key = getSetting("anthropicKey");
+    var model = getSetting("anthropicModel") || "claude-sonnet-5";
+    return fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 2000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    }).then(function(res){
+      return res.json().then(function(data){
+        if(!res.ok){
+          var msg = (data && data.error && data.error.message) ? data.error.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        }
+        var text = (data.content && data.content[0] && data.content[0].text) || "";
+        return text;
+      });
+    });
+  }
+
+  function setLoading(loading){
+    el.generateBtn.setAttribute("data-loading", loading ? "true" : "false");
+    el.generateBtn.disabled = loading || state.items.length === 0;
+    el.regenerateBtn.disabled = loading || state.items.length === 0;
+    el.generateLabel.textContent = loading ? "整理中…" : "整理本週重點";
+  }
+  function showError(msg){
+    el.errorBanner.textContent = msg;
+    el.errorBanner.setAttribute("data-show", "true");
+  }
+  function hideError(){ el.errorBanner.setAttribute("data-show", "false"); }
+
+  function runGenerate(){
+    hideError();
+    if(!anthropicReady()){
+      el.noKeyBanner.setAttribute("data-show", "true");
+      openSettingsModal();
+      return;
+    }
+    el.noKeyBanner.setAttribute("data-show", "false");
+    setLoading(true);
+    var prompt = buildPrompt();
+    callAnthropic(prompt).then(function(text){
+      state.output = text;
+      state.lastRun = nowLabel();
+      el.outputArea.value = text;
+      saveOutput();
+      setLoading(false);
+    }).catch(function(err){
+      setLoading(false);
+      showError("整理時發生問題:" + (err && err.message ? err.message : "請確認 API Key 是否正確。"));
+    });
+  }
+  el.generateBtn.addEventListener("click", runGenerate);
+  el.regenerateBtn.addEventListener("click", runGenerate);
+
+  el.copyBtn.addEventListener("click", function(){
+    var text = el.outputArea.value;
+    if(!text){ showToast("目前沒有內容可以複製"); return; }
+    var done = function(){ showToast("已複製到剪貼簿"); };
+    var fail = function(){
+      try{
+        el.outputArea.focus();
+        el.outputArea.select();
+        document.execCommand("copy");
+        done();
+      }catch(e){
+        showToast("複製失敗,請手動選取文字複製");
+      }
+    };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else { fail(); }
+    }catch(e){ fail(); }
+  });
+
+  var toastTimer = null;
+  function showToast(msg){
+    el.toast.textContent = msg;
+    el.toast.setAttribute("data-show", "true");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.toast.setAttribute("data-show", "false"); }, 2600);
+  }
+
+  // ---------- file drop support (.txt / .eml) ----------
+  ["dragover"].forEach(function(evtName){
+    el.contentInput.addEventListener(evtName, function(e){ e.preventDefault(); });
+  });
+  el.contentInput.addEventListener("drop", function(e){
+    if(!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+    var file = e.dataTransfer.files[0];
+    if(!/\.(txt|eml)$/i.test(file.name)) return;
+    e.preventDefault();
+    var reader = new FileReader();
+    reader.onload = function(){
+      var raw = String(reader.result || "");
+      if(/\.eml$/i.test(file.name)){
+        var blankLineIdx = raw.search(/\r?\n\r?\n/);
+        if(blankLineIdx !== -1){ raw = raw.slice(blankLineIdx).trim(); }
+      }
+      el.contentInput.value = (el.contentInput.value ? el.contentInput.value + "\n\n" : "") + raw.trim();
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------- GitHub (BYOK, direct browser call) ----------
+  function githubHeaders(){
+    var token = getSetting("githubToken");
+    var h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    if(token) h["Authorization"] = "Bearer " + token;
+    return h;
+  }
+
+  function parseGithubIssueUrl(url){
+    var m = /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(issues|pull)\/(\d+)/.exec(url.trim());
+    if(!m) return null;
+    return { owner: m[1], repo: m[2], kind: m[3], number: m[4] };
+  }
+
+  function renderGithubStatusUI(){
+    var connected = !!getSetting("githubToken");
+    el.githubStatusText.textContent = connected
+      ? ("GitHub: " + (getSetting("githubLogin") ? ("已連接為 @" + getSetting("githubLogin")) : "已設定 token"))
+      : "尚未設定 GitHub Token";
+    el.fetchLinkBtn.title = connected
+      ? "抓取這個連結的內容"
+      : "抓取這個連結的內容(公開 repo 免 token,私有 repo 需先在設定輸入 GitHub Token)";
+  }
+
+  el.fetchLinkBtn.addEventListener("click", function(){
+    var raw = el.linkInput.value.trim();
+    var parsed = parseGithubIssueUrl(raw);
+    if(!parsed){
+      showToast("看不出這是 GitHub issue／PR 連結,格式需為 .../owner/repo/issues/123 或 .../pull/123");
+      return;
+    }
+    el.fetchLinkBtn.disabled = true;
+    fetch("https://api.github.com/repos/" + parsed.owner + "/" + parsed.repo + "/issues/" + parsed.number, {
+      headers: githubHeaders()
+    }).then(function(res){
+      return res.json().then(function(data){
+        if(!res.ok){
+          var msg = (data && data.message) ? data.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      });
+    }).then(function(data){
+      var body = (data.body || "").trim();
+      if(body.length > 3000) body = body.slice(0, 3000) + " …(已截斷)";
+      el.contentInput.value = data.title + (body ? ("\n\n" + body) : "");
+      showToast("已抓取內容,請檢查後按「加入本週清單」");
+    }).catch(function(err){
+      showToast("抓取失敗:" + (err && err.message ? err.message : "請確認連結與 Token"));
+    }).finally(function(){
+      el.fetchLinkBtn.disabled = false;
+    });
+  });
+
+  function setGithubFetchLoading(loading){
+    el.githubFetchBtn.setAttribute("data-loading", loading ? "true" : "false");
+    el.githubFetchBtn.disabled = loading;
+    el.githubFetchLabel.textContent = loading ? "抓取中…" : "📥 抓取本週指派給我的動態";
+  }
+
+  el.githubFetchBtn.addEventListener("click", function(){
+    var token = getSetting("githubToken");
+    if(!token){
+      openSettingsModal();
+      showToast("請先在設定裡輸入 GitHub Token");
+      return;
+    }
+    setGithubFetchLoading(true);
+    var sinceISO = new Date(state.weekStart.getFullYear(), state.weekStart.getMonth(), state.weekStart.getDate()).toISOString();
+    var url = "https://api.github.com/issues?filter=assigned&state=all&sort=updated&direction=desc&per_page=50&since=" + encodeURIComponent(sinceISO);
+    fetch(url, { headers: githubHeaders() }).then(function(res){
+      return res.json().then(function(data){
+        if(!res.ok){
+          var msg = (data && data.message) ? data.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      });
+    }).then(function(list){
+      if(!Array.isArray(list) || list.length === 0){
+        showToast("本週沒有找到新的指派項目");
+        return;
+      }
+      var existingLinks = state.items.map(function(i){ return i.link; });
+      var added = 0;
+      list.forEach(function(issue){
+        if(existingLinks.indexOf(issue.html_url) !== -1) return;
+        var repoFull = issue.repository && issue.repository.full_name
+          ? issue.repository.full_name
+          : (issue.repository_url ? issue.repository_url.split("/repos/")[1] : "repo");
+        var kind = issue.pull_request ? "PR" : "Issue";
+        var text = "[" + repoFull + "] " + kind + ":" + issue.title + "(" + issue.state + ")";
+        addItem("github", text, issue.html_url);
+        added++;
+      });
+      showToast(added > 0 ? ("已加入 " + added + " 筆 GitHub 動態") : "沒有新的項目(可能都已加入過)");
+    }).catch(function(err){
+      showToast("抓取失敗:" + (err && err.message ? err.message : "請確認 Token 是否有效"));
+    }).finally(function(){
+      setGithubFetchLoading(false);
+    });
+  });
+
+  // ---------- Settings modal ----------
+  function openSettingsModal(){
+    el.anthropicKeyInput.value = getSetting("anthropicKey");
+    el.anthropicModelInput.value = getSetting("anthropicModel") || "claude-sonnet-5";
+    el.githubTokenInput.value = getSetting("githubToken");
+    el.settingsModal.setAttribute("data-open", "true");
+  }
+  function closeSettingsModal(){ el.settingsModal.setAttribute("data-open", "false"); }
+
+  el.settingsBtn.addEventListener("click", openSettingsModal);
+  el.settingsClose.addEventListener("click", closeSettingsModal);
+  el.openSettingsFromBanner.addEventListener("click", openSettingsModal);
+  el.settingsModal.addEventListener("click", function(e){ if(e.target === el.settingsModal) closeSettingsModal(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && el.settingsModal.getAttribute("data-open") === "true") closeSettingsModal();
+  });
+
+  el.anthropicToggle.addEventListener("click", function(){
+    el.anthropicKeyInput.type = el.anthropicKeyInput.type === "password" ? "text" : "password";
+  });
+  el.githubToggle.addEventListener("click", function(){
+    el.githubTokenInput.type = el.githubTokenInput.type === "password" ? "text" : "password";
+  });
+
+  function renderTopStatus(){
+    var hasAnthropic = anthropicReady();
+    var hasGithub = !!getSetting("githubToken");
+    el.gearDot.setAttribute("data-state", (hasAnthropic && hasGithub) ? "ok" : ((hasAnthropic || hasGithub) ? "partial" : "off"));
+    el.anthropicStatusPill.setAttribute("data-state", hasAnthropic ? "connected" : "off");
+    el.anthropicStatusLabel.textContent = hasAnthropic ? "已設定" : "尚未設定";
+    el.githubStatusPill.setAttribute("data-state", hasGithub ? "connected" : "off");
+    el.githubStatusLabel.textContent = hasGithub
+      ? (getSetting("githubLogin") ? ("已連接為 @" + getSetting("githubLogin")) : "已設定")
+      : "尚未設定";
+    el.noKeyBanner.setAttribute("data-show", hasAnthropic ? "false" : "true");
+    renderGithubStatusUI();
+  }
+
+  el.anthropicSave.addEventListener("click", function(){
+    var key = el.anthropicKeyInput.value.trim();
+    var model = el.anthropicModelInput.value.trim() || "claude-sonnet-5";
+    if(!key){ showToast("請先輸入 API Key"); return; }
+    setSetting("anthropicKey", key);
+    setSetting("anthropicModel", model);
+    renderTopStatus();
+    showToast("已儲存 Anthropic API Key");
+  });
+  el.anthropicClear.addEventListener("click", function(){
+    clearSetting("anthropicKey");
+    clearSetting("anthropicModel");
+    el.anthropicKeyInput.value = "";
+    el.anthropicModelInput.value = "claude-sonnet-5";
+    renderTopStatus();
+    showToast("已清除 Anthropic API Key");
+  });
+
+  el.githubTest.addEventListener("click", function(){
+    var token = el.githubTokenInput.value.trim();
+    if(!token){ showToast("請先輸入 Token"); return; }
+    el.githubTest.disabled = true;
+    fetch("https://api.github.com/user", {
+      headers: { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token, "X-GitHub-Api-Version": "2022-11-28" }
+    }).then(function(res){
+      return res.json().then(function(data){
+        if(!res.ok){
+          var msg = (data && data.message) ? data.message : ("HTTP " + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      });
+    }).then(function(data){
+      setSetting("githubToken", token);
+      setSetting("githubLogin", data.login || "");
+      renderTopStatus();
+      showToast("已連接為 @" + data.login);
+    }).catch(function(err){
+      showToast("Token 驗證失敗:" + (err && err.message ? err.message : "請確認內容"));
+    }).finally(function(){
+      el.githubTest.disabled = false;
+    });
+  });
+  el.githubClear.addEventListener("click", function(){
+    clearSetting("githubToken");
+    clearSetting("githubLogin");
+    el.githubTokenInput.value = "";
+    renderTopStatus();
+    showToast("已清除 GitHub Token");
+  });
+
+  // ---------- init ----------
+  renderSourceRow();
+  loadWeek();
+  renderWeek();
+  renderItems();
+  renderOutput();
+  renderTopStatus();
+})();
+</script>
+</body>
+</html>
